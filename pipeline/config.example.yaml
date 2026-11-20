@@ -1,0 +1,127 @@
+# pipeline/config.example.yaml
+# Chapter 1 Lab Configuration
+# Copy to pipeline/config.yaml and edit as needed.
+# All paths are relative to the repo root unless absolute.
+
+# ─────────────────────────────────────────────────────────────────
+# MODEL ROUTING
+# ─────────────────────────────────────────────────────────────────
+# The Lab supports two model paths:
+# 1. Hosted (OpenRouter) — set OPENROUTER_API_KEY in env or .env file
+# 2. Local (Ollama) — requires Ollama running with nomic-embed-text:v1.5 pulled
+# If neither is configured, the pipeline runs in DRY-RUN/MOCK mode.
+
+model:
+  # Primary model for synthesis (research step)
+  # Options: "openrouter/nvidia/nemotron-3.5-super-vl:free" | "ollama/gemma4:26b"
+  synthesis: "openrouter/nvidia/nemotron-3.5-super-vl:free"
+
+  # Embedding model for crawl/upsert
+  # Options: "ollama/nomic-embed-text:v1.5" | "mock" (deterministic hash)
+  embedding: "ollama/nomic-embed-text:v1.5"
+
+  # Ollama connection (used if embedding=synthesis=ollama/*)
+  ollama:
+    base_url: "http://localhost:11434/v1"
+    # num_ctx must match Ollama's OLLAMA_CONTEXT_LENGTH (65536 for Ch1 Lab)
+    num_ctx: 65536
+
+  # OpenRouter connection (used if synthesis=openrouter/*)
+  openrouter:
+    base_url: "https://openrouter.ai/api/v1"
+    # Set OPENROUTER_API_KEY in environment or .env file
+    # api_key: "${OPENROUTER_API_KEY}"  # uncomment and set if not using env
+
+# ─────────────────────────────────────────────────────────────────
+# VECTOR STORE
+# ─────────────────────────────────────────────────────────────────
+# Chapter 1 uses a simplified JSON-based vector store (no Qdrant required).
+# Production uses Qdrant — see RagSystem/db/qdrant_client.py.
+
+vector_store:
+  # Type: "json" (Ch1 Lab) | "qdrant" (production)
+  type: "json"
+  # Path to JSON file acting as vector store
+  path: "data/vector_store.json"
+  # Collection name (for compatibility with Qdrant config)
+  collection: "researcher_docs"
+  # Embedding dimension (nomic-embed-text:v1.5 = 768; this repo's hash
+  # pseudo-embedding uses 256 -- see pipeline/crawler/crawl.py)
+  dimension: 768
+
+# ─────────────────────────────────────────────────────────────────
+# CRAWLER SETTINGS
+# ─────────────────────────────────────────────────────────────────
+crawler:
+  # Source directory (fixture documents for Ch1 Lab)
+  source_dir: "sample_sources"
+  # Chunking strategy: "paragraph" | "fixed" | "semantic"
+  chunk_strategy: "paragraph"
+  # Target chunk size in tokens (approximate)
+  chunk_size: 512
+  # Overlap between chunks in tokens (not implemented by the Ch1 Lab's
+  # simple paragraph chunker; production's semantic_chunking.py does)
+  chunk_overlap: 50
+  # Metadata to attach to each chunk
+  default_metadata:
+    source_type: "fixture"
+    lab_chapter: 1
+
+# ─────────────────────────────────────────────────────────────────
+# RESEARCHER SETTINGS
+# ─────────────────────────────────────────────────────────────────
+researcher:
+  # Number of top chunks to retrieve for synthesis
+  top_k: 5
+  # Minimum similarity score (0-1) for retrieval
+  min_score: 0.0
+  # Synthesis prompt template
+  synthesis_prompt: |
+    You are a technical research analyst. Using ONLY the provided context chunks,
+    write a concise research report answering the query.
+
+    Query: {query}
+
+    Context chunks:
+    {context}
+
+    Format your response as Markdown with:
+    1. Executive Summary (2-3 sentences)
+    2. Key Findings (3-5 bullet points, each with [source] citation)
+    3. Sources (list of cited chunks with chunk_id)
+    4. Disclaimer: "This report is synthesized from fixture documents for Chapter 1 Lab purposes."
+
+# ─────────────────────────────────────────────────────────────────
+# PUBLISHER SETTINGS
+# ─────────────────────────────────────────────────────────────────
+publisher:
+  # Type: "dryrun" (Ch1 Lab -- the only mode this repo implements) |
+  # "wordpress" (production, Ch8+, documented but not implemented here)
+  type: "dryrun"
+  # Output directory for dry-run
+  output_dir: "output"
+  # Default category for published posts
+  default_category: "Commentary"
+  # WordPress settings (production only, not used/implemented in Ch1)
+  wordpress:
+    ssh_host: ""        # [REDACTED in production]
+    ssh_user: ""        # [REDACTED in production]
+    ssh_key_path: ""    # [REDACTED in production]
+    wp_path: ""         # [REDACTED in production]
+    category: "Commentary"
+
+# ─────────────────────────────────────────────────────────────────
+# SNAPSHOT SETTINGS (Market State Snapshot analog)
+# ─────────────────────────────────────────────────────────────────
+snapshot:
+  # Output directory
+  output_dir: "output"
+  # Default regime for Lab
+  default_regime: "Low-Vol Trending-Up"
+
+# ─────────────────────────────────────────────────────────────────
+# LOGGING
+# ─────────────────────────────────────────────────────────────────
+logging:
+  level: "INFO"
+  format: "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"

@@ -1,0 +1,2 @@
+{"t": 1700000000.0, "type": "run_start", "researcher": "stale_example", "pid": 999999}
+{"t": 1700000000.1, "type": "stage", "name": "Retrieve + summarize context", "state": "running"}

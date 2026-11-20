@@ -1,0 +1,11 @@
+# Market Aggregate Commentary (Fixture)
+
+Across sectors, breadth improved modestly week over week. This
+aggregate report is the one MarketSectorPipeline's real
+PublicationManager only ever attempts after every individual sector
+report in the cycle has already published successfully [src:
+PublicationManager.py:145-180].
+
+*This is Chapter 8 Lab fixture data, not a real freemarketresearcher.com
+report. It exists only to give the checkpoint/publish Lab something to
+publish.*

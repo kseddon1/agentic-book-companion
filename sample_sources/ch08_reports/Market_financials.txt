@@ -1,0 +1,9 @@
+# Financials Sector Commentary (Fixture)
+
+Regional banks saw modest net-interest-margin expansion this cycle as
+deposit costs stabilized. Large-cap money-center banks remain the
+sector's most liquid names.
+
+*This is Chapter 8 Lab fixture data, not a real freemarketresearcher.com
+report. It exists only to give the checkpoint/publish Lab something to
+publish.*

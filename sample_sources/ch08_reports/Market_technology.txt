@@ -1,0 +1,9 @@
+# Technology Sector Commentary (Fixture)
+
+Cloud infrastructure spend held up through the quarter while
+consumer-hardware names saw softer unit volumes. AI-accelerator
+capex continues to be the sector's dominant narrative.
+
+*This is Chapter 8 Lab fixture data, not a real freemarketresearcher.com
+report. It exists only to give the checkpoint/publish Lab something to
+publish.*
